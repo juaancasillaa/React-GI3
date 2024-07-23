@@ -1,52 +1,25 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './ToDoList.css';
 
-const buttonStyle = {
-  border: '1px solid black',
-  color: 'black',
-  padding: '5px 10px',
-  margin: '5px',
-  cursor: 'pointer',
-  backgroundColor: 'white',
-};
-
-const ToDoList = () => {
-  const [tasks, setTasks] = useState([]);
-  const [title, setTitle] = useState('');
-
-  const addTask = (task) => {
-    setTasks([...tasks, { ...task, id: Date.now() }]);
-  };
-
+const ToDoList = ({ tasks, setTasks }) => {
   const deleteTask = (id) => {
     setTasks(tasks.filter(task => task.id !== id));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (title.trim()) {
-      addTask({ title });
-      setTitle('');
-    }
-  };
-
   return (
-    <div>
-      <h1>To-Do List</h1>
-      <form onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          value={title} 
-          onChange={(e) => setTitle(e.target.value)} 
-          placeholder="Add new task" 
-        />
-        <button type="submit" style={buttonStyle}>Add Task</button>
-      </form>
-      <ul>
+    <div className="todo-container">
+      <h1>Task List</h1>
+      <Link to="/ToDoList/add" className="add-task-btn">Add Task</Link>
+      <ul className="task-list">
         {tasks.map(task => (
-          <li key={task.id}>
-            <Link to={`/ToDoList/${task.id}`} style={{ color: 'black', textDecoration: 'none' }}>{task.title}</Link>
-            <button onClick={() => deleteTask(task.id)} style={buttonStyle}>Delete</button>
+          <li key={task.id} className="task-item">
+            <Link to={`/ToDoList/${task.id}`} className="task-title">{task.title}</Link>
+            <button 
+              onClick={() => deleteTask(task.id)} 
+              className="delete-btn">
+              Delete
+            </button>
           </li>
         ))}
       </ul>
@@ -54,21 +27,5 @@ const ToDoList = () => {
   );
 };
 
-const TaskDetail = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+export default ToDoList;
 
-  const handleBack = () => {
-    navigate('/ToDoList');
-  };
-
-  return (
-    <div>
-      <h2>Task Detail</h2>
-      <p>Task ID: {id}</p>
-      <button onClick={handleBack} style={buttonStyle}>Back to List</button>
-    </div>
-  );
-};
-
-export { ToDoList, TaskDetail };
